@@ -8,8 +8,14 @@ app.use(express.static('public'))
 
 // ================ ROUTES ============== //
 app.get('/', async (req, res) => {
+    const puzzle = await scrapePuzzle('https://www.brainzilla.com/logic/zebra/blood-donation/')
+
     res.render('index.ejs', {
-        puzzle: await scrapePuzzle('https://www.brainzilla.com/logic/zebra/fundraising-dinner/')
+        name: puzzle.name,
+        people: puzzle.people,
+        categories: puzzle.categories,
+        categoryNames: Object.keys(puzzle.categories),
+        clues: puzzle.clues
     })
 })
 

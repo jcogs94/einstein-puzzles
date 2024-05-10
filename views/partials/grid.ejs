@@ -1,21 +1,22 @@
 <div id="grid">
+    <h1><%= name %></h1>
     <div class="row" id="people">
-        <div class="column"></div>
+        <div class="column categories"></div>
         <% people.forEach( (person) => { %>
             <div class="column">
                 <h4><%= person %></h4>
             </div>
         <% }) %>
     </div>
-    <% categories.forEach( (category) => { %>
+    <% categoryNames.forEach( (name) => { %>
         <div class="row">
-            <div class="column">
-                <h4><%= category %></h4>
+            <div class="column categories">
+                <h4><%= name %></h4>
             </div>
-            <% for (let i = 0; i < data[category].length; i++) { %>
+            <% for (let i = 0; i < categories[name].length; i++) { %>
                 <div class="column">
                     <ul class="options">
-                        <% data[category].forEach( (option) => { %>
+                        <% categories[name].forEach( (option) => { %>
                             <li><%= option %></li>
                         <% }) %>
                     </ul>
