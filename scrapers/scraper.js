@@ -1,11 +1,11 @@
 import * as puppeteer from 'puppeteer'
 
-const scrapePuzzles = async () => {
-    const URL = 'https://www.brainzilla.com/logic/zebra/wooden-furniture/'
+const scrapePuzzle = async (url) => {
+    let puzzle = {}
 
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
-    await  page.goto(URL)
+    await  page.goto(url)
 
     const el = await page.waitForSelector('xpath///*[@id="game"]')
 
@@ -26,14 +26,21 @@ const scrapePuzzles = async () => {
     // console.log(links)
 
     // Scrapes all clues from the page
-    const clues = await page.evaluate(() =>
+    puzzle.clues = await page.evaluate(() =>
         Array.from(document.querySelectorAll('.clues ul li'), (el) => el.textContent)
     )
 
     await el.dispose()
     await browser.close()
 
-    return clues
+    return puzzle
 }
 
-export default scrapePuzzles
+// //*[@id="game"]/div[1]/div[1]
+
+const fullOutput = await scrapePuzzle('https://www.brainzilla.com/logic/zebra/fundraising-dinner/')
+const desiredOutput = fullOutput.clues
+
+console.log(desiredOutput)
+
+export default scrapePuzzle

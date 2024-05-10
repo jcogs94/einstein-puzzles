@@ -1,0 +1,24 @@
+<div class="row" id="people">
+    <div class="column"></div>
+    <% people.forEach( (person) => { %>
+        <div class="column">
+            <h4><%= person %></h4>
+        </div>
+    <% }) %>
+</div>
+<% categories.forEach( (category) => { %>
+    <div class="row">
+        <div class="column">
+            <h4><%= category %></h4>
+        </div>
+        <% for (let i = 0; i < data[category].length; i++) { %>
+            <div class="column">
+                <ul class="options">
+                    <% data[category].forEach( (option) => { %>
+                        <li><%= option %></li>
+                    <% }) %>
+                </ul>
+            </div>
+        <% } %>
+    </div>
+<% }) %>
