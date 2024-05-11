@@ -97,18 +97,6 @@ mongoose.connection.on('connected', () => {
     console.log('Connected to database...')
 })
 
-app.listen(3000, async () => {
-    console.log('listening on port 3000')
+app.listen(3009, async () => {
+    console.log('listening on port 3009')
 })
-
-// ================ old index.html body ================ //
-{/* <h1>Success, see links below</h1>
-<ul>
-    <% let i = 1 %>
-    <% links.forEach( (link) => { %>
-        <li>
-            <a href='/brainzilla?<%= '&url=' + encodeURIComponent(link) %>'>Link <%= i %></a>
-        </li>
-        <% i++ %>
-    <% }) %>
-</ul> */}
