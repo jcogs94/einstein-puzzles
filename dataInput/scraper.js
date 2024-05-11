@@ -1,6 +1,9 @@
-import * as puppeteer from 'puppeteer'
+import puppeteer from 'puppeteer'
+import Source from '../models/puzzle.js'
+import SeenWebsites from '../models/savedURLs.js'
+import SavedURLs from '../models/savedURLs.js'
 
-const scrapePuzzle = async (url) => {
+const addBrainzillaPuzzle = async (url) => {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     await  page.goto(url)
@@ -8,6 +11,7 @@ const scrapePuzzle = async (url) => {
     // Scrapes data from the page and returns in obj
     let puzzle = await page.evaluate(() => ({
         name: Array.from(document.querySelectorAll('.page-header > h1'), (el) => el.textContent),
+        difficulty: Array.from(document.querySelectorAll('.difficulty-rating'), (el) => el.title),
         people: Array.from(document.querySelectorAll('.title'), (el) => el.innerHTML),
         options: Array.from(document.querySelectorAll('.house > li > select > option'), (el) => el.innerHTML),
         categories: Array.from(document.querySelectorAll('.container-columns:first-child > .column:first-child > ul > li'), (el) => el.innerHTML),
@@ -19,6 +23,9 @@ const scrapePuzzle = async (url) => {
     // Converts puzzle.name from arr to str and removes branding
     puzzle.name = puzzle.name[0]
     puzzle.name = puzzle.name.replace(' Zebra Puzzle', '')
+    
+    // Converts puzzle.difficulty from arr to str
+    puzzle.difficulty = puzzle.difficulty[0]
 
     // Removes duplicates from the select options
     puzzle.options = puzzle.options.filter((item, index) =>
@@ -38,13 +45,42 @@ const scrapePuzzle = async (url) => {
     // Creates a new object with key pairs of the category name and
     // its respective options
     let newCategoriesObj = {}
-    for(let i = 0; i < puzzle.people.length; i++) {
+    for(let i = 0; i < puzzle.categories.length; i++) {
         newCategoriesObj[puzzle.categories[i]] = puzzle.options[i]
     }
     puzzle.categories = newCategoriesObj
     delete puzzle.options
 
     return puzzle
+}
+
+const scrapePuzzle = async (url) => {
+    const foundSources = await Source.find()
+    const savedURLs = await SavedURLs.findById('663fc8777ef2e6d873c9cc6f')
+
+    for await (const source of foundSources) {
+        if (url.indexOf(source.url) !== -1) {
+            let puzzleData
+
+            console.log('scraping', url)
+            if(source.name === 'Brainzilla') {
+                puzzleData = await addBrainzillaPuzzle(url)
+            }
+
+            const newPuzzle = {
+                url: url,
+                data: puzzleData
+            }
+
+            source.puzzles.push(newPuzzle)
+            savedURLs.URLs.push(url)
+
+            await source.save()
+            await savedURLs.save()
+
+            console.log(newPuzzle.data.name, 'added...')
+        }
+    }
 }
 
 export default scrapePuzzle

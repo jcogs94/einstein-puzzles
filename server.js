@@ -1,67 +1,74 @@
-import scrapePuzzle from './scrapers/scraper.js'
+import dotenv from 'dotenv'
+import scrapePuzzle from './dataInput/scraper.js'
+import startCrawling from './dataInput/crawler.js'
 import express from 'express'
-import fetch from 'node-fetch'
-import Cheerio from 'cheerio'
+import mongoose from 'mongoose'
+import Source from './models/puzzle.js'
+import SavedURLs from './models/savedURLs.js'
+
 const app = express()
+dotenv.config()
+
+mongoose.connect(process.env.MONGODB_URI)
 
 app.use(express.urlencoded({ extended: false }))
 app.use(express.static('public'))
 
-const BASE_URL = 'https://www.brainzilla.com'
-const ZEBRA_URL = 'https://www.brainzilla.com/logic/zebra/'
-const seenUrls = {}
-let puzzleUrls = []
-
-const getUrl = (link) => {
-    if (link.indexOf('http') !== -1) {
-        return link
-    } else {
-        return `${BASE_URL}${link}`
-    }
-}
-
-const crawl = async ({ url }) => {
-    if (url === BASE_URL) {
-        console.log('Starting to crawl...')
-    } else if (seenUrls[url] || (url.indexOf(ZEBRA_URL) === -1) || (url.indexOf('pdf') !== -1) || (url.indexOf('answers') !== -1)) {
-        return
-    }
-    
-    console.log('crawling', url)
-    seenUrls[url] = true
-    
-    const response = await fetch(url)
-    const html = await response.text()
-    const $ = Cheerio.load(html)
-    const links = $('a').map((i, link) => link.attribs.href).get()
-
-    for await (const link of links) {
-        await crawl({
-            url: getUrl(link)
-        })
-    }
-
-    // links.forEach( async (link) => {
-    // })
-
-    if (url !== BASE_URL && url !== ZEBRA_URL && (url.indexOf('printable') === -1)) {
-        puzzleUrls.push(url)
-    }
-}
-
 
 // ================ ROUTES ============== //
 app.get('/', async (req, res) => {
-    await crawl({
-        url: BASE_URL
-    })
-
-    console.log('success.... rendering page...')
-
+    const foundSources = await Source.find()
+    
     res.render('./index.ejs', {
-        links: puzzleUrls
+        sources: foundSources
     })
 })
+
+app.post('/sources/new', async (req, res) => {
+    let newSource = (req.body)
+    
+    if (newSource.crawl === 'true') {
+        newSource.crawl = true
+    } else if (newSource.crawl === 'false') {
+        newSource.crawl = false
+    }
+
+    await Source.create(newSource)
+    res.redirect('/')
+})
+
+app.post('/sources/update', async (req, res) => {
+    const foundSources = await Source.find()
+    let savedURLs = await SavedURLs.findById('663fc8777ef2e6d873c9cc6f')
+    savedURLs = [...savedURLs.URLs]
+
+    console.log('savedURLs:', savedURLs)
+    
+    let newPuzzleUrls = []
+
+    for await (const source of foundSources) {
+        const puzzleUrls = await startCrawling(source.url, source.subUrl)
+        puzzleUrls.forEach( (url) => {
+            if (savedURLs.indexOf(url) === -1) {
+                newPuzzleUrls.push(url)
+            }
+        })
+    }
+
+    for await (let puzzleUrl of newPuzzleUrls) {
+        await scrapePuzzle(puzzleUrl)
+    }
+    
+    res.redirect('/')
+})
+
+// // Need to add a route to initiate crawling and scraping
+// // somewhere here to update database
+// app.get('/', async (req, res) => {
+//     res.render('./index.ejs', {
+//         links: puzzleUrls
+//     })
+// })
 
 app.get('/brainzilla', async (req, res) => {
     const puzzle = await scrapePuzzle(req.query.url)
@@ -77,6 +84,22 @@ app.get('/brainzilla', async (req, res) => {
 
 
 // ================ SERVER ============== //
+mongoose.connection.on('connected', () => {
+    console.log('Connected to database...')
+})
+
 app.listen(3000, async () => {
     console.log('listening on port 3000')
 })
+
+// ================ old index.html body ================ //
+{/* <h1>Success, see links below</h1>
+<ul>
+    <% let i = 1 %>
+    <% links.forEach( (link) => { %>
+        <li>
+            <a href='/brainzilla?<%= '&url=' + encodeURIComponent(link) %>'>Link <%= i %></a>
+        </li>
+        <% i++ %>
+    <% }) %>
+</ul> */}

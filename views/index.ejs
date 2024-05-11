@@ -4,18 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/style.css">
-    <title>Document</title>
+    <title>Einstein Puzzle Printouts</title>
 </head>
 <body>
-    <h1>Success, see links below</h1>
-    <ul>
-        <% let i = 1 %>
-        <% links.forEach( (link) => { %>
-            <li>
-                <a href='/brainzilla?<%= '&url=' + encodeURIComponent(link) %>'>Link <%= i %></a>
-            </li>
-            <% i++ %>
-        <% }) %>
-    </ul>
+    <h1>Einstein Puzzle Printouts</h1>
+    
+    <!-- <form action="/sources/update" method="post">
+        <button type="submit">Update Sources</button>
+    </form> -->
+    <!-- <form action="/sources/new" method="post">
+        <label for="name">Name:</label>
+        <input type="text" name="name">
+        <label for="url">Url:</label>
+        <input type="text" name="url">
+        <label for="subUrl">Sub-url:</label>
+        <input type="text" name="subUrl">
+        <button type="submit">Add Source</button>
+    </form> -->
 </body>
 </html>
