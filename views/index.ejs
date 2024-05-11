@@ -3,25 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/style.css">
-    <title><%= name %></title>
+    <link rel="stylesheet" href="css/style.css">
+    <title>Document</title>
 </head>
 <body>
-    <main>
-        <%- include('./partials/grid.ejs') %>
-        <div id="clues">
-            <h1>Clues</h1>
-            <div>
-                <ul>
-                    <% clues.forEach((clue) => { %>
-                        <li>
-                            <input type="checkbox">
-                            <p><%= clue %></p>
-                        </li>
-                    <% }) %>
-                </ul>
-            </div>
-        </div>
-    </main>
+    <h1>Success, see links below</h1>
+    <ul>
+        <% let i = 1 %>
+        <% links.forEach( (link) => { %>
+            <li>
+                <a href='/brainzilla?<%= '&url=' + encodeURIComponent(link) %>'>Link <%= i %></a>
+            </li>
+            <% i++ %>
+        <% }) %>
+    </ul>
 </body>
 </html>
