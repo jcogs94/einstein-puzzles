@@ -7,7 +7,6 @@ const puzzleSchema = new mongoose.Schema({
         difficulty: String,
         people: Array,
         categories: Object,
-        options: Array,
         clues: Array
     }
 })

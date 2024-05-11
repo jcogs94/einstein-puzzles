@@ -7,7 +7,29 @@
     <title>Einstein Puzzle Printouts</title>
 </head>
 <body>
-    <h1>Einstein Puzzle Printouts</h1>
+    <main>
+        <h1>Einstein Puzzle Printouts</h1>
+        <h2>Puzzles</h2>
+        <% sources.forEach( (source) => { %>
+            <h3><%= source.name %></h3>
+            <% let puzzlesByDifficulty = {} %>
+            <% source.puzzles.forEach( (puzzle) => { %>
+                <% if (puzzlesByDifficulty[puzzle.data.difficulty] === undefined) { %>
+                    <% puzzlesByDifficulty[puzzle.data.difficulty] = [] %>
+                <% } %>
+                <% puzzlesByDifficulty[puzzle.data.difficulty].push(puzzle) %>
+            <% }) %>
+            <% let difficulties = Object.keys(puzzlesByDifficulty) %>
+            <% difficulties.forEach( (difficulty) => { %>
+                <h4><%= difficulty %></h4>
+                <ul>
+                    <% puzzlesByDifficulty[difficulty].forEach( (puzzle) => { %>
+                        <li><a href="/puzzles/<%= source._id %>/<%= puzzle._id %>"><%= puzzle.data.name %></a></li>
+                    <% }) %>
+                </ul>
+            <% }) %>
+        <% }) %>
+    </main>
     
     <!-- <form action="/sources/update" method="post">
         <button type="submit">Update Sources</button>

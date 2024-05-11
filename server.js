@@ -62,19 +62,28 @@ app.post('/sources/update', async (req, res) => {
     res.redirect('/')
 })
 
-// // Need to add a route to initiate crawling and scraping
-// // somewhere here to update database
-// app.get('/', async (req, res) => {
-//     res.render('./index.ejs', {
-//         links: puzzleUrls
-//     })
-// })
+app.get('/puzzles/:sourceId/:puzzleId', async (req, res) => {
+    const allFoundSources = await Source.find()
 
-app.get('/brainzilla', async (req, res) => {
-    const puzzle = await scrapePuzzle(req.query.url)
+    let foundSource
+    let puzzle
+
+    allFoundSources.forEach( (source) => {
+        if (source._id == req.params.sourceId) {
+            foundSource = source
+        }
+    })
     
-    res.render('./brainzilla/index.ejs', {
+
+    foundSource.puzzles.forEach( (foundPuzzle) => {
+        if (foundPuzzle._id == req.params.puzzleId) {
+            puzzle = foundPuzzle.data
+        }
+    })
+
+    res.render('./puzzle/show.ejs', {
         name: puzzle.name,
+        difficulty: puzzle.difficulty,
         people: puzzle.people,
         categories: puzzle.categories,
         categoryNames: Object.keys(puzzle.categories),
