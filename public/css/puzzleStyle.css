@@ -32,7 +32,7 @@ main {
 
 .column {
     width: 170px;
-    height: 120px;
+    height: 105px;
     padding: 5px;
     border: 1px solid black;
 
@@ -49,19 +49,22 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     list-style: none;
-    gap: 2px;
+    text-align: center;
 }
 
+.options {
+    font-size: .85rem;
+}
 
 
 #people > * {
-    height: 50px;
+    height: 35px;
 }
 
 .categories {
-    width: 140px;
+    width: 125px;
 }
 
 #clues {
@@ -100,4 +103,22 @@ main {
             margin-bottom: auto;
         }
     }
+}
+
+@media print {
+    @page {
+        size: landscape;
+    }
+    
+    #grid {
+        page-break-after: always;
+    }
+
+    main {
+        gap: 0;
+    }
+
+    /* #clues > h1 {
+        padding-top: 0;
+    } */
 }
