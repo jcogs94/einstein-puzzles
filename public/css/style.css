@@ -3,13 +3,77 @@
     margin: 0;
 }
 
+body {
+    width: 100vw;
+}
+
 body, main {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-items: flex-start;
+    width: 100vw;
 }
 
 h1 {
     padding: 30px 0;
+    text-align: center;
+    width: 100%;
+    background-color: black;
+    color: white;
+}
+
+h2 {
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+}
+
+.source, .difficulty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.source {
+    width: 100vw;
+    background-color: black;
+    color: white;
+    
+    h3 {
+        padding: 15px 0;
+        font-size: 1.5rem;
+    }
+}
+
+.difficulty-container {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    justify-content: center;
+    padding: 10px 0;
+    flex-wrap: wrap;
+    width: calc(100vw - 10px);
+    gap: 10px;
+}
+
+.difficulty {
+    align-items: flex-start;
+    width: 100%;
+    
+    h4 {
+        padding: 10px 15px;
+        font-size: 1.4rem;
+    }
+
+    ul {
+        margin: 0 10px;
+        list-style: none;
+        padding: 0;
+    }
+    
+    a {
+        text-decoration: none;
+        color: white;
+    }
 }
