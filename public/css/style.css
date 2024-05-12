@@ -71,6 +71,10 @@ h2 {
         list-style: none;
         padding: 0;
     }
+
+    li {
+        margin: 8px 0;
+    }
     
     a {
         text-decoration: none;
